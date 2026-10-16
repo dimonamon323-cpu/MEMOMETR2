@@ -184,6 +184,14 @@
   .field { margin-bottom: 18px; }
   .field:last-child { margin-bottom: 0; }
 
+  .char-count {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
   input[type="file"] { display: none; }
 
   .file-btn {
@@ -369,46 +377,68 @@
   .btn:active { transform: translateY(0); }
   .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+  /* ===== КАРТОЧКА МЕМА ===== */
   .mem-item {
     display: flex;
     gap: 14px;
     padding: 14px;
-    background: rgba(0,0,0,0.35);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     margin-bottom: 10px;
     align-items: flex-start;
     transition: border-color 0.2s, background 0.2s;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
   .mem-item:hover {
     border-color: var(--border-hover);
-    background: rgba(0,0,0,0.5);
   }
 
   .mem-item img {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     border-radius: 8px;
     object-fit: cover;
     flex-shrink: 0;
     background: var(--surface-2);
     border: 1px solid var(--border);
+    cursor: pointer;
   }
 
   .mem-info { flex: 1; min-width: 0; }
-  .mem-desc {
-    font-size: 14px;
-    margin-bottom: 4px;
+
+  .mem-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
     word-break: break-word;
     color: var(--text-strong);
+    line-height: 1.3;
   }
-  .mem-desc a {
+  .mem-title a {
     color: var(--gold-soft);
     text-decoration: none;
     font-size: 12px;
     margin-left: 6px;
+    font-weight: 400;
   }
-  .mem-desc a:hover { text-decoration: underline; }
+  .mem-title a:hover { text-decoration: underline; }
+
+  .mem-review {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 8px;
+    padding: 9px 12px;
+    background: rgba(255,255,255,0.025);
+    border-left: 2px solid var(--gold);
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    opacity: 0.92;
+  }
+
   .mem-scores {
     font-size: 11px;
     color: var(--muted);
@@ -425,19 +455,21 @@
     flex-shrink: 0;
   }
   .mem-score-num {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     color: var(--gold-soft);
     line-height: 1;
+    text-shadow: 0 0 16px rgba(212,175,55,0.3);
   }
   .mem-score-rank {
     font-size: 10px;
     color: var(--muted);
-    margin-top: 4px;
+    margin-top: 5px;
     white-space: nowrap;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    max-width: 90px;
   }
 
   .delete-btn {
@@ -485,6 +517,7 @@
     header h1 { font-size: 24px; }
     .tab { font-size: 12px; padding: 10px 6px; }
     .tab .badge { display: none; }
+    .mem-score-rank { max-width: 70px; }
   }
 </style>
 </head>
@@ -529,8 +562,15 @@
       </div>
 
       <div class="field">
-        <label>Описание</label>
-        <textarea id="memDesc" placeholder="Пара слов о меме..."></textarea>
+        <label>Название мема</label>
+        <input type="text" id="memTitle" placeholder="Коротко: «Кот в наушниках»" maxlength="100">
+        <div class="char-count" id="titleCount">0 / 100</div>
+      </div>
+
+      <div class="field">
+        <label>Рецензия</label>
+        <textarea id="memDesc" placeholder="Почему такая оценка? Что зашло, что нет, насколько смешно..." maxlength="1000"></textarea>
+        <div class="char-count" id="descCount">0 / 1000</div>
       </div>
 
       <div class="criteria-header">
@@ -667,6 +707,17 @@ criteria.forEach((_, i) => {
   document.getElementById("crit" + i).addEventListener("input", updateTotal);
 });
 
+/* ===== СЧЁТЧИКИ СИМВОЛОВ ===== */
+const memTitleEl = document.getElementById("memTitle");
+const memDescEl  = document.getElementById("memDesc");
+
+memTitleEl.addEventListener("input", () => {
+  document.getElementById("titleCount").textContent = `${memTitleEl.value.length} / 100`;
+});
+memDescEl.addEventListener("input", () => {
+  document.getElementById("descCount").textContent = `${memDescEl.value.length} / 1000`;
+});
+
 /* ===== ПРЕВЬЮ ===== */
 const fileInput = document.getElementById("memFile");
 const preview = document.getElementById("preview");
@@ -695,14 +746,15 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
   const meme = {
     url: document.getElementById("memUrl").value.trim(),
     image: preview.style.display === "block" ? preview.src : "",
-    desc: document.getElementById("memDesc").value.trim(),
+    title: memTitleEl.value.trim(),
+    desc: memDescEl.value.trim(),
     scores, total, rank,
     authorId: currentUser.uid,
     createdAt: serverTimestamp()
   };
 
-  if (!meme.url && !meme.image && !meme.desc) {
-    alert("Добавь ссылку, картинку или описание");
+  if (!meme.title && !meme.url && !meme.image) {
+    alert("Добавь хотя бы название, ссылку или картинку");
     return;
   }
 
@@ -717,7 +769,6 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     setTimeout(() => {
       btn.textContent = "Сохранить мем";
       btn.disabled = false;
-      // переключаемся на ленту после сохранения
       document.querySelector('.tab[data-tab="fresh"]').click();
     }, 800);
   } catch (e) {
@@ -729,7 +780,10 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
 
 function resetForm() {
   document.getElementById("memUrl").value = "";
-  document.getElementById("memDesc").value = "";
+  memTitleEl.value = "";
+  memDescEl.value = "";
+  document.getElementById("titleCount").textContent = "0 / 100";
+  document.getElementById("descCount").textContent = "0 / 1000";
   document.getElementById("memFile").value = "";
   preview.src = "";
   preview.style.display = "none";
@@ -752,17 +806,13 @@ onSnapshot(q, (snapshot) => {
 function renderAll() {
   const mine = allMemes.filter(m => currentUser && m.authorId === currentUser.uid);
 
-  // Свежие — уже отсортированы по createdAt desc
   renderList("listFresh", allMemes, false);
 
-  // Топ — сортируем по total
   const top = [...allMemes].sort((a, b) => (b.total || 0) - (a.total || 0));
   renderList("listTop", top, false);
 
-  // Мои
   renderList("listMine", mine, true);
 
-  // Бейджи
   document.getElementById("badgeFresh").textContent = allMemes.length;
   document.getElementById("badgeTop").textContent = allMemes.length;
   document.getElementById("badgeMine").textContent = mine.length;
@@ -782,6 +832,11 @@ function renderList(containerId, list, showDelete) {
 
   box.innerHTML = "";
   list.forEach(m => {
+    // Поддержка старых мемов: если нет title — показываем desc как название
+    const title = m.title || (m.desc ? "" : "");
+    const review = m.desc || "";
+    const hasTitle = !!m.title;
+
     const div = document.createElement("div");
     div.className = "mem-item";
     const img = m.image ? `<img src="${m.image}" alt="">` : "";
@@ -796,10 +851,20 @@ function renderList(containerId, list, showDelete) {
       });
     }
 
+    // Если старый мем — без title, то desc рендерим как название
+    const titleHtml = hasTitle
+      ? `<div class="mem-title">${escapeHtml(title)}${link}</div>`
+      : (review ? `<div class="mem-title">${escapeHtml(review)}${link}</div>` : `<div class="mem-title" style="color:#525252">(без названия)${link}</div>`);
+
+    const reviewHtml = (hasTitle && review)
+      ? `<div class="mem-review">${escapeHtml(review)}</div>`
+      : "";
+
     div.innerHTML = `
       ${img}
       <div class="mem-info">
-        <div class="mem-desc">${escapeHtml(m.desc) || "<span style='color:#525252'>(без описания)</span>"}${link}</div>
+        ${titleHtml}
+        ${reviewHtml}
         <div class="mem-scores">${details}</div>
         <div class="mem-date">${dateStr}</div>
       </div>
