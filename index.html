@@ -37,7 +37,6 @@
     overflow-x: hidden;
   }
 
-  /* Размытый фон */
   body::before {
     content: "";
     position: fixed;
@@ -50,7 +49,6 @@
     transform: scale(1.1);
   }
 
-  /* Тёмный градиент поверх фона */
   body::after {
     content: "";
     position: fixed;
@@ -477,7 +475,7 @@
       <div class="total-rank" id="rank">—</div>
     </div>
 
-    <button class="btn" onclick="saveMeme()">Сохранить мем</button>
+    <button class="btn" id="saveBtn">Сохранить мем</button>
   </div>
 
   <div class="card">
@@ -489,7 +487,29 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, deleteDoc, doc,
+  onSnapshot, query, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* ===== ТВОЙ КОНФИГ ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCOWy3ZIZpNs61IRVD3QofBANAV-5AOv80",
+  authDomain: "memometr-99425.firebaseapp.com",
+  projectId: "memometr-99425",
+  storageBucket: "memometr-99425.firebasestorage.app",
+  messagingSenderId: "429277144377",
+  appId: "1:429277144377:web:90b53870cd00df394534e8",
+  measurementId: "G-GXY6T3KQXC"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const memesCol = collection(db, "memes");
+
+/* ===== КРИТЕРИИ ===== */
 const criteria = [
   { key: "Смех",               desc: "Засмеялся ли вообще" },
   { key: "Длина смеха",        desc: "Сколько по времени ржал" },
@@ -508,6 +528,7 @@ const ranks = [
   { min: 90, max: 90, label: "Мем года" }
 ];
 
+/* ===== СЛАЙДЕРЫ ===== */
 const critBox = document.getElementById("criteria");
 criteria.forEach((c, i) => {
   const div = document.createElement("div");
@@ -520,7 +541,7 @@ criteria.forEach((c, i) => {
       </div>
       <div class="criterion-val" id="val${i}">0</div>
     </div>
-    <input type="range" min="0" max="15" value="0" id="crit${i}" oninput="updateTotal()">
+    <input type="range" min="0" max="15" value="0" id="crit${i}">
   `;
   critBox.appendChild(div);
 });
@@ -541,6 +562,11 @@ function updateTotal() {
   document.getElementById("rank").textContent = r ? r.label : "";
 }
 
+criteria.forEach((_, i) => {
+  document.getElementById("crit" + i).addEventListener("input", updateTotal);
+});
+
+/* ===== ПРЕВЬЮ ФАЙЛА ===== */
 const fileInput = document.getElementById("memFile");
 const preview = document.getElementById("preview");
 fileInput.addEventListener("change", e => {
@@ -554,27 +580,40 @@ fileInput.addEventListener("change", e => {
   reader.readAsDataURL(file);
 });
 
-function saveMeme() {
+/* ===== СОХРАНЕНИЕ ===== */
+document.getElementById("saveBtn").addEventListener("click", async () => {
   const scores = getScores();
   const total = scores.reduce((a, b) => a + b, 0);
   const rank = (ranks.find(r => total >= r.min && total <= r.max) || {}).label || "";
 
   const meme = {
-    id: Date.now(),
     url: document.getElementById("memUrl").value.trim(),
     image: preview.style.display === "block" ? preview.src : "",
     desc: document.getElementById("memDesc").value.trim(),
     scores, total, rank,
-    date: new Date().toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })
+    createdAt: serverTimestamp()
   };
 
-  const list = JSON.parse(localStorage.getItem("memes") || "[]");
-  list.unshift(meme);
-  localStorage.setItem("memes", JSON.stringify(list));
+  if (!meme.url && !meme.image && !meme.desc) {
+    alert("Добавь ссылку, картинку или описание");
+    return;
+  }
 
-  resetForm();
-  renderList();
-}
+  const btn = document.getElementById("saveBtn");
+  btn.disabled = true;
+  btn.textContent = "Сохранение...";
+
+  try {
+    await addDoc(memesCol, meme);
+    resetForm();
+    btn.textContent = "Сохранено ✓";
+    setTimeout(() => { btn.textContent = "Сохранить мем"; btn.disabled = false; }, 1000);
+  } catch (e) {
+    alert("Ошибка: " + e.message);
+    btn.textContent = "Сохранить мем";
+    btn.disabled = false;
+  }
+});
 
 function resetForm() {
   document.getElementById("memUrl").value = "";
@@ -586,8 +625,17 @@ function resetForm() {
   updateTotal();
 }
 
-function renderList() {
-  const list = JSON.parse(localStorage.getItem("memes") || "[]");
+/* ===== ЖИВОЙ СПИСОК ===== */
+const q = query(memesCol, orderBy("createdAt", "desc"));
+onSnapshot(q, (snapshot) => {
+  const list = [];
+  snapshot.forEach(d => {
+    const data = d.data();
+    // пропускаем тестовый документ
+    if (data.test === "1" || data.test === 1) return;
+    list.push({ id: d.id, ...data });
+  });
+
   const box = document.getElementById("memList");
   document.getElementById("count").textContent = list.length;
 
@@ -602,33 +650,52 @@ function renderList() {
     div.className = "mem-item";
     const img = m.image ? `<img src="${m.image}" alt="">` : "";
     const link = m.url ? `<a href="${m.url}" target="_blank" rel="noopener">открыть ↗</a>` : "";
-    const details = criteria.map((c, i) => `${c.key} ${m.scores[i]}`).join(" · ");
+    const details = (m.scores || []).map((s, i) => `${criteria[i].key} ${s}`).join(" · ");
+
+    let dateStr = "";
+    if (m.createdAt?.toDate) {
+      dateStr = m.createdAt.toDate().toLocaleString("ru-RU", {
+        day: "2-digit", month: "2-digit", year: "2-digit",
+        hour: "2-digit", minute: "2-digit"
+      });
+    }
+
     div.innerHTML = `
       ${img}
       <div class="mem-info">
-        <div class="mem-desc">${m.desc || "<span style='color:#525252'>(без описания)</span>"}${link}</div>
+        <div class="mem-desc">${escapeHtml(m.desc) || "<span style='color:#525252'>(без описания)</span>"}${link}</div>
         <div class="mem-scores">${details}</div>
-        <div class="mem-date">${m.date}</div>
+        <div class="mem-date">${dateStr}</div>
       </div>
       <div class="mem-score">
         <div class="mem-score-num">${m.total}</div>
         <div class="mem-score-rank">${m.rank}</div>
       </div>
-      <button class="delete-btn" onclick="deleteMeme(${m.id})">✕</button>
+      <button class="delete-btn" data-id="${m.id}">✕</button>
     `;
+    div.querySelector(".delete-btn").addEventListener("click", () => deleteMeme(m.id));
     box.appendChild(div);
   });
+});
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
 }
 
-function deleteMeme(id) {
-  let list = JSON.parse(localStorage.getItem("memes") || "[]");
-  list = list.filter(m => m.id !== id);
-  localStorage.setItem("memes", JSON.stringify(list));
-  renderList();
+async function deleteMeme(id) {
+  if (!confirm("Удалить этот мем?")) return;
+  try {
+    await deleteDoc(doc(db, "memes", id));
+  } catch (e) {
+    alert("Ошибка удаления: " + e.message);
+  }
 }
 
+/* ===== СТАРТ ===== */
 updateTotal();
-renderList();
 </script>
 </body>
 </html>
