@@ -20,6 +20,7 @@
     --gold-soft: #e8c86a;
     --gold-dim: rgba(212, 175, 55, 0.15);
     --red: #f87171;
+    --green: #34d399;
   }
 
   html, body { height: 100%; }
@@ -130,7 +131,6 @@
     color: var(--gold-soft);
   }
 
-  /* ===== КОНТЕНТ ТАБОВ ===== */
   .tab-panel { display: none; }
   .tab-panel.active { display: block; animation: fadeIn 0.2s ease; }
 
@@ -377,6 +377,17 @@
   .btn:active { transform: translateY(0); }
   .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-hover);
+    color: var(--gold-soft);
+    box-shadow: none;
+  }
+  .btn-ghost:hover {
+    background: var(--gold-dim);
+    color: var(--gold-soft);
+  }
+
   /* ===== КАРТОЧКА МЕМА ===== */
   .mem-item {
     display: flex;
@@ -391,9 +402,7 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
-  .mem-item:hover {
-    border-color: var(--border-hover);
-  }
+  .mem-item:hover { border-color: var(--border-hover); }
 
   .mem-item img {
     width: 64px;
@@ -403,7 +412,6 @@
     flex-shrink: 0;
     background: var(--surface-2);
     border: 1px solid var(--border);
-    cursor: pointer;
   }
 
   .mem-info { flex: 1; min-width: 0; }
@@ -453,6 +461,7 @@
   .mem-score {
     text-align: right;
     flex-shrink: 0;
+    min-width: 80px;
   }
   .mem-score-num {
     font-size: 24px;
@@ -469,7 +478,11 @@
     white-space: nowrap;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    max-width: 90px;
+  }
+  .mem-score-votes {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
   }
 
   .delete-btn {
@@ -491,6 +504,146 @@
     border-color: var(--red);
     color: var(--red);
     background: rgba(248,113,113,0.08);
+  }
+
+  /* ===== КНОПКА "ОЦЕНИТЬ" и "ПОКАЗАТЬ ОЦЕНКИ" ===== */
+  .mem-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .mini-btn {
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .mini-btn:hover {
+    border-color: var(--border-hover);
+    background: var(--gold-dim);
+    color: var(--gold-soft);
+  }
+  .mini-btn.voted {
+    color: var(--green);
+    border-color: rgba(52,211,153,0.3);
+    cursor: default;
+  }
+  .mini-btn.voted:hover { background: rgba(255,255,255,0.03); }
+
+  /* ===== СПИСОК ГОЛОСОВ ===== */
+  .votes-list {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  .votes-list.open { display: block; }
+  .vote-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .vote-row:last-child { border-bottom: none; }
+  .vote-user {
+    color: var(--muted);
+    font-size: 11px;
+    font-family: ui-monospace, monospace;
+  }
+  .vote-score {
+    font-weight: 700;
+    color: var(--gold-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .vote-score small {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 10px;
+    margin-left: 4px;
+  }
+  .votes-empty {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    padding: 8px;
+  }
+
+  /* ===== МОДАЛКА ===== */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.15s ease;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: #141414;
+    border: 1px solid var(--border-hover);
+    border-radius: 18px;
+    padding: 24px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal h2 {
+    font-size: 18px;
+    margin-bottom: 4px;
+    color: var(--text-strong);
+  }
+  .modal-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    word-break: break-word;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { color: var(--text-strong); background: rgba(255,255,255,0.05); }
+
+  .modal-wrap { position: relative; }
+
+  .modal .btn {
+    margin-top: 16px;
   }
 
   .empty {
@@ -517,7 +670,6 @@
     header h1 { font-size: 24px; }
     .tab { font-size: 12px; padding: 10px 6px; }
     .tab .badge { display: none; }
-    .mem-score-rank { max-width: 70px; }
   }
 </style>
 </head>
@@ -528,7 +680,6 @@
     <p>Оцени мем по шести критериям · максимум 90</p>
   </header>
 
-  <!-- ТАБЫ -->
   <div class="tabs" id="tabs">
     <button class="tab active" data-tab="fresh">Свежие <span class="badge" id="badgeFresh">0</span></button>
     <button class="tab" data-tab="top">Топ <span class="badge" id="badgeTop">0</span></button>
@@ -536,17 +687,14 @@
     <button class="tab" data-tab="mine">Мои <span class="badge" id="badgeMine">0</span></button>
   </div>
 
-  <!-- ПАНЕЛЬ: СВЕЖИЕ -->
   <div class="tab-panel active" id="panel-fresh">
     <div id="listFresh"></div>
   </div>
 
-  <!-- ПАНЕЛЬ: ТОП -->
   <div class="tab-panel" id="panel-top">
     <div id="listTop"></div>
   </div>
 
-  <!-- ПАНЕЛЬ: ДОБАВИТЬ -->
   <div class="tab-panel" id="panel-add">
     <div class="card">
       <div class="field">
@@ -574,7 +722,7 @@
       </div>
 
       <div class="criteria-header">
-        <h2>Критерии</h2>
+        <h2>Твоя оценка</h2>
         <span>0 – 15 каждый</span>
       </div>
 
@@ -589,17 +737,31 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛЬ: МОИ -->
   <div class="tab-panel" id="panel-mine">
     <div id="listMine"></div>
+  </div>
+</div>
+
+<!-- МОДАЛКА ГОЛОСОВАНИЯ -->
+<div class="modal-backdrop" id="voteModal">
+  <div class="modal modal-wrap">
+    <button class="modal-close" id="voteClose">×</button>
+    <h2>Оценить мем</h2>
+    <div class="modal-sub" id="voteModalTitle"></div>
+    <div id="voteCriteria"></div>
+    <div class="total-box">
+      <div class="total-score" id="voteTotal">0<small>/ 90</small></div>
+      <div class="total-rank" id="voteRank">—</div>
+    </div>
+    <button class="btn" id="voteSubmit">Отправить оценку</button>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, deleteDoc, doc,
-  onSnapshot, query, orderBy, serverTimestamp
+  getFirestore, collection, addDoc, deleteDoc, doc, getDoc, setDoc,
+  onSnapshot, query, orderBy, serverTimestamp, collectionGroup
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
   getAuth, signInAnonymously, onAuthStateChanged
@@ -621,7 +783,7 @@ const auth = getAuth(app);
 const memesCol = collection(db, "memes");
 
 let currentUser = null;
-let allMemes = [];
+let allMemes = [];         // [{ id, ...data, votes: [...], avg, votesCount, myVote }]
 
 signInAnonymously(auth).catch(err => {
   console.error("Ошибка входа:", err);
@@ -670,235 +832,90 @@ const ranks = [
   { min: 90, max: 90, label: "Мем года" }
 ];
 
-const critBox = document.getElementById("criteria");
-criteria.forEach((c, i) => {
-  const div = document.createElement("div");
-  div.className = "criterion";
-  div.innerHTML = `
-    <div class="criterion-top">
-      <div>
-        <div class="criterion-name">${c.key}</div>
-        <div class="criterion-desc">${c.desc}</div>
-      </div>
-      <div class="criterion-val" id="val${i}">0</div>
-    </div>
-    <input type="range" min="0" max="15" value="0" id="crit${i}">
-  `;
-  critBox.appendChild(div);
-});
-
-function getScores() {
-  return criteria.map((_, i) => +document.getElementById("crit" + i).value);
+function getRank(total) {
+  return (ranks.find(r => total >= r.min && total <= r.max) || {}).label || "";
 }
 
-function updateTotal() {
+/* ===== ГЕНЕРАЦИЯ СЛАЙДЕРОВ (переиспользуется) ===== */
+function buildSliders(container, idPrefix) {
+  container.innerHTML = "";
+  criteria.forEach((c, i) => {
+    const div = document.createElement("div");
+    div.className = "criterion";
+    div.innerHTML = `
+      <div class="criterion-top">
+        <div>
+          <div class="criterion-name">${c.key}</div>
+          <div class="criterion-desc">${c.desc}</div>
+        </div>
+        <div class="criterion-val" id="${idPrefix}val${i}">0</div>
+      </div>
+      <input type="range" min="0" max="15" value="0" id="${idPrefix}crit${i}">
+    `;
+    container.appendChild(div);
+  });
+}
+
+/* ===== ФОРМА ДОБАВЛЕНИЯ ===== */
+buildSliders(document.getElementById("criteria"), "add");
+
+function getAddScores() {
+  return criteria.map((_, i) => +document.getElementById("addcrit" + i).value);
+}
+
+function updateAddTotal() {
   let total = 0;
   criteria.forEach((_, i) => {
-    const v = +document.getElementById("crit" + i).value;
-    document.getElementById("val" + i).textContent = v;
+    const v = +document.getElementById("addcrit" + i).value;
+    document.getElementById("addval" + i).textContent = v;
     total += v;
   });
   document.getElementById("total").innerHTML = `${total}<small>/ 90</small>`;
-  const r = ranks.find(r => total >= r.min && total <= r.max);
-  document.getElementById("rank").textContent = r ? r.label : "";
+  document.getElementById("rank").textContent = getRank(total);
 }
 
 criteria.forEach((_, i) => {
-  document.getElementById("crit" + i).addEventListener("input", updateTotal);
+  document.getElementById("addcrit" + i).addEventListener("input", updateAddTotal);
 });
 
-/* ===== СЧЁТЧИКИ СИМВОЛОВ ===== */
-const memTitleEl = document.getElementById("memTitle");
-const memDescEl  = document.getElementById("memDesc");
+/* ===== МОДАЛКА ГОЛОСОВАНИЯ ===== */
+buildSliders(document.getElementById("voteCriteria"), "vote");
 
-memTitleEl.addEventListener("input", () => {
-  document.getElementById("titleCount").textContent = `${memTitleEl.value.length} / 100`;
-});
-memDescEl.addEventListener("input", () => {
-  document.getElementById("descCount").textContent = `${memDescEl.value.length} / 1000`;
-});
+let voteTargetMemeId = null;
 
-/* ===== ПРЕВЬЮ ===== */
-const fileInput = document.getElementById("memFile");
-const preview = document.getElementById("preview");
-fileInput.addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    preview.src = ev.target.result;
-    preview.style.display = "block";
-  };
-  reader.readAsDataURL(file);
-});
-
-/* ===== СОХРАНЕНИЕ ===== */
-document.getElementById("saveBtn").addEventListener("click", async () => {
-  if (!currentUser) {
-    alert("Подожди секунду, идёт вход...");
-    return;
-  }
-
-  const scores = getScores();
-  const total = scores.reduce((a, b) => a + b, 0);
-  const rank = (ranks.find(r => total >= r.min && total <= r.max) || {}).label || "";
-
-  const meme = {
-    url: document.getElementById("memUrl").value.trim(),
-    image: preview.style.display === "block" ? preview.src : "",
-    title: memTitleEl.value.trim(),
-    desc: memDescEl.value.trim(),
-    scores, total, rank,
-    authorId: currentUser.uid,
-    createdAt: serverTimestamp()
-  };
-
-  if (!meme.title && !meme.url && !meme.image) {
-    alert("Добавь хотя бы название, ссылку или картинку");
-    return;
-  }
-
-  const btn = document.getElementById("saveBtn");
-  btn.disabled = true;
-  btn.textContent = "Сохранение...";
-
-  try {
-    await addDoc(memesCol, meme);
-    resetForm();
-    btn.textContent = "Сохранено ✓";
-    setTimeout(() => {
-      btn.textContent = "Сохранить мем";
-      btn.disabled = false;
-      document.querySelector('.tab[data-tab="fresh"]').click();
-    }, 800);
-  } catch (e) {
-    alert("Ошибка: " + e.message);
-    btn.textContent = "Сохранить мем";
-    btn.disabled = false;
-  }
-});
-
-function resetForm() {
-  document.getElementById("memUrl").value = "";
-  memTitleEl.value = "";
-  memDescEl.value = "";
-  document.getElementById("titleCount").textContent = "0 / 100";
-  document.getElementById("descCount").textContent = "0 / 1000";
-  document.getElementById("memFile").value = "";
-  preview.src = "";
-  preview.style.display = "none";
-  criteria.forEach((_, i) => document.getElementById("crit" + i).value = 0);
-  updateTotal();
+function getVoteScores() {
+  return criteria.map((_, i) => +document.getElementById("votecrit" + i).value);
 }
 
-/* ===== ЖИВАЯ ПОДПИСКА ===== */
-const q = query(memesCol, orderBy("createdAt", "desc"));
-onSnapshot(q, (snapshot) => {
-  allMemes = [];
-  snapshot.forEach(d => {
-    const data = d.data();
-    if (data.test === "1" || data.test === 1) return;
-    allMemes.push({ id: d.id, ...data });
+function updateVoteTotal() {
+  let total = 0;
+  criteria.forEach((_, i) => {
+    const v = +document.getElementById("votecrit" + i).value;
+    document.getElementById("voteval" + i).textContent = v;
+    total += v;
   });
-  renderAll();
-});
-
-function renderAll() {
-  const mine = allMemes.filter(m => currentUser && m.authorId === currentUser.uid);
-
-  renderList("listFresh", allMemes, false);
-
-  const top = [...allMemes].sort((a, b) => (b.total || 0) - (a.total || 0));
-  renderList("listTop", top, false);
-
-  renderList("listMine", mine, true);
-
-  document.getElementById("badgeFresh").textContent = allMemes.length;
-  document.getElementById("badgeTop").textContent = allMemes.length;
-  document.getElementById("badgeMine").textContent = mine.length;
+  document.getElementById("voteTotal").innerHTML = `${total}<small>/ 90</small>`;
+  document.getElementById("voteRank").textContent = getRank(total);
 }
 
-function renderList(containerId, list, showDelete) {
-  const box = document.getElementById(containerId);
+criteria.forEach((_, i) => {
+  document.getElementById("votecrit" + i).addEventListener("input", updateVoteTotal);
+});
 
-  if (!list.length) {
-    box.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">${showDelete ? "📝" : "🖼️"}</div>
-        ${showDelete ? "Ты ещё ничего не добавил" : "Пока ничего не оценено"}
-      </div>`;
+function openVoteModal(memeId) {
+  const meme = allMemes.find(m => m.id === memeId);
+  if (!meme) return;
+  if (meme.myVote) {
+    alert("Ты уже голосовал за этот мем");
     return;
   }
 
-  box.innerHTML = "";
-  list.forEach(m => {
-    // Поддержка старых мемов: если нет title — показываем desc как название
-    const title = m.title || (m.desc ? "" : "");
-    const review = m.desc || "";
-    const hasTitle = !!m.title;
+  voteTargetMemeId = memeId;
+  document.getElementById("voteModalTitle").textContent = meme.title || "(без названия)";
 
-    const div = document.createElement("div");
-    div.className = "mem-item";
-    const img = m.image ? `<img src="${m.image}" alt="">` : "";
-    const link = m.url ? `<a href="${m.url}" target="_blank" rel="noopener">открыть ↗</a>` : "";
-    const details = (m.scores || []).map((s, i) => `${criteria[i].key} ${s}`).join(" · ");
-
-    let dateStr = "";
-    if (m.createdAt?.toDate) {
-      dateStr = m.createdAt.toDate().toLocaleString("ru-RU", {
-        day: "2-digit", month: "2-digit", year: "2-digit",
-        hour: "2-digit", minute: "2-digit"
-      });
-    }
-
-    // Если старый мем — без title, то desc рендерим как название
-    const titleHtml = hasTitle
-      ? `<div class="mem-title">${escapeHtml(title)}${link}</div>`
-      : (review ? `<div class="mem-title">${escapeHtml(review)}${link}</div>` : `<div class="mem-title" style="color:#525252">(без названия)${link}</div>`);
-
-    const reviewHtml = (hasTitle && review)
-      ? `<div class="mem-review">${escapeHtml(review)}</div>`
-      : "";
-
-    div.innerHTML = `
-      ${img}
-      <div class="mem-info">
-        ${titleHtml}
-        ${reviewHtml}
-        <div class="mem-scores">${details}</div>
-        <div class="mem-date">${dateStr}</div>
-      </div>
-      <div class="mem-score">
-        <div class="mem-score-num">${m.total}</div>
-        <div class="mem-score-rank">${m.rank}</div>
-      </div>
-      ${showDelete ? `<button class="delete-btn" data-id="${m.id}">✕</button>` : ""}
-    `;
-
-    const delBtn = div.querySelector(".delete-btn");
-    if (delBtn) delBtn.addEventListener("click", () => deleteMeme(m.id));
-
-    box.appendChild(div);
+  criteria.forEach((_, i) => {
+    document.getElementById("votecrit" + i).value = 0;
   });
-}
+  updateVoteTotal();
 
-function escapeHtml(str) {
-  if (!str) return "";
-  return str.replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[c]));
-}
-
-async function deleteMeme(id) {
-  if (!confirm("Удалить этот мем?")) return;
-  try {
-    await deleteDoc(doc(db, "memes", id));
-  } catch (e) {
-    alert("Ошибка удаления: " + e.message);
-  }
-}
-
-updateTotal();
-</script>
-</body>
-</html>
+  document.getElementById
