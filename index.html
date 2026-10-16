@@ -19,7 +19,6 @@
     --gold: #d4af37;
     --gold-soft: #e8c86a;
     --gold-dim: rgba(212, 175, 55, 0.15);
-    --green: #34d399;
     --red: #f87171;
   }
 
@@ -62,12 +61,11 @@
 
   .container { max-width: 720px; margin: 0 auto; position: relative; }
 
-  header { margin-bottom: 32px; text-align: center; }
+  header { margin-bottom: 24px; text-align: center; }
   header h1 {
     font-size: 30px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: var(--text-strong);
     background: linear-gradient(180deg, #ffffff 0%, #d4af37 130%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -79,6 +77,66 @@
     font-size: 13px;
     margin-top: 6px;
     letter-spacing: 0.02em;
+  }
+
+  /* ===== ТАБЫ ===== */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 6px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 11px 10px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab:hover { color: var(--text-strong); background: rgba(255,255,255,0.03); }
+  .tab.active {
+    background: var(--gold-dim);
+    color: var(--gold-soft);
+    box-shadow: 0 0 0 1px var(--border-hover) inset;
+  }
+  .tab .badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+  }
+  .tab.active .badge {
+    background: rgba(212,175,55,0.2);
+    color: var(--gold-soft);
+  }
+
+  /* ===== КОНТЕНТ ТАБОВ ===== */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.2s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .card {
@@ -309,27 +367,7 @@
     transform: translateY(-1px);
   }
   .btn:active { transform: translateY(0); }
-
-  .list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  .list-header h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-strong);
-  }
-  .list-header span {
-    font-size: 12px;
-    color: var(--gold-soft);
-    background: var(--gold-dim);
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: 1px solid var(--border-hover);
-    font-weight: 600;
-  }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .mem-item {
     display: flex;
@@ -425,9 +463,19 @@
 
   .empty {
     text-align: center;
-    padding: 40px 20px;
+    padding: 60px 20px;
     color: var(--muted);
     font-size: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .empty-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+    opacity: 0.4;
   }
 
   @media (max-width: 500px) {
@@ -435,6 +483,8 @@
     .card { padding: 18px; }
     .total-score { font-size: 36px; }
     header h1 { font-size: 24px; }
+    .tab { font-size: 12px; padding: 10px 6px; }
+    .tab .badge { display: none; }
   }
 </style>
 </head>
@@ -445,45 +495,63 @@
     <p>Оцени мем по шести критериям · максимум 90</p>
   </header>
 
-  <div class="card">
-    <div class="field">
-      <label>Ссылка на мем</label>
-      <input type="url" id="memUrl" placeholder="https://...">
-    </div>
-
-    <div class="field">
-      <label>Или изображение</label>
-      <label for="memFile" class="file-btn">📎 Выбрать файл</label>
-      <input type="file" id="memFile" accept="image/*">
-      <img id="preview" class="preview" alt="">
-    </div>
-
-    <div class="field">
-      <label>Описание</label>
-      <textarea id="memDesc" placeholder="Пара слов о меме..."></textarea>
-    </div>
-
-    <div class="criteria-header">
-      <h2>Критерии</h2>
-      <span>0 – 15 каждый</span>
-    </div>
-
-    <div id="criteria"></div>
-
-    <div class="total-box">
-      <div class="total-score" id="total">0<small>/ 90</small></div>
-      <div class="total-rank" id="rank">—</div>
-    </div>
-
-    <button class="btn" id="saveBtn">Сохранить мем</button>
+  <!-- ТАБЫ -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="fresh">Свежие <span class="badge" id="badgeFresh">0</span></button>
+    <button class="tab" data-tab="top">Топ <span class="badge" id="badgeTop">0</span></button>
+    <button class="tab" data-tab="add">Добавить</button>
+    <button class="tab" data-tab="mine">Мои <span class="badge" id="badgeMine">0</span></button>
   </div>
 
-  <div class="card">
-    <div class="list-header">
-      <h2>Сохранённые</h2>
-      <span id="count">0</span>
+  <!-- ПАНЕЛЬ: СВЕЖИЕ -->
+  <div class="tab-panel active" id="panel-fresh">
+    <div id="listFresh"></div>
+  </div>
+
+  <!-- ПАНЕЛЬ: ТОП -->
+  <div class="tab-panel" id="panel-top">
+    <div id="listTop"></div>
+  </div>
+
+  <!-- ПАНЕЛЬ: ДОБАВИТЬ -->
+  <div class="tab-panel" id="panel-add">
+    <div class="card">
+      <div class="field">
+        <label>Ссылка на мем</label>
+        <input type="url" id="memUrl" placeholder="https://...">
+      </div>
+
+      <div class="field">
+        <label>Или изображение</label>
+        <label for="memFile" class="file-btn">📎 Выбрать файл</label>
+        <input type="file" id="memFile" accept="image/*">
+        <img id="preview" class="preview" alt="">
+      </div>
+
+      <div class="field">
+        <label>Описание</label>
+        <textarea id="memDesc" placeholder="Пара слов о меме..."></textarea>
+      </div>
+
+      <div class="criteria-header">
+        <h2>Критерии</h2>
+        <span>0 – 15 каждый</span>
+      </div>
+
+      <div id="criteria"></div>
+
+      <div class="total-box">
+        <div class="total-score" id="total">0<small>/ 90</small></div>
+        <div class="total-rank" id="rank">—</div>
+      </div>
+
+      <button class="btn" id="saveBtn">Сохранить мем</button>
     </div>
-    <div id="memList"></div>
+  </div>
+
+  <!-- ПАНЕЛЬ: МОИ -->
+  <div class="tab-panel" id="panel-mine">
+    <div id="listMine"></div>
   </div>
 </div>
 
@@ -493,8 +561,10 @@ import {
   getFirestore, collection, addDoc, deleteDoc, doc,
   onSnapshot, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getAuth, signInAnonymously, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-/* ===== ТВОЙ КОНФИГ ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyCOWy3ZIZpNs61IRVD3QofBANAV-5AOv80",
   authDomain: "memometr-99425.firebaseapp.com",
@@ -507,7 +577,39 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 const memesCol = collection(db, "memes");
+
+let currentUser = null;
+let allMemes = [];
+
+signInAnonymously(auth).catch(err => {
+  console.error("Ошибка входа:", err);
+  alert("Не удалось войти. Проверь Anonymous в Firebase Auth.");
+});
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  renderAll();
+});
+
+/* ===== ТАБЫ ===== */
+const tabs = document.querySelectorAll(".tab");
+const panels = {
+  fresh: document.getElementById("panel-fresh"),
+  top:   document.getElementById("panel-top"),
+  add:   document.getElementById("panel-add"),
+  mine:  document.getElementById("panel-mine")
+};
+
+tabs.forEach(t => {
+  t.addEventListener("click", () => {
+    tabs.forEach(x => x.classList.remove("active"));
+    Object.values(panels).forEach(p => p.classList.remove("active"));
+    t.classList.add("active");
+    panels[t.dataset.tab].classList.add("active");
+  });
+});
 
 /* ===== КРИТЕРИИ ===== */
 const criteria = [
@@ -528,7 +630,6 @@ const ranks = [
   { min: 90, max: 90, label: "Мем года" }
 ];
 
-/* ===== СЛАЙДЕРЫ ===== */
 const critBox = document.getElementById("criteria");
 criteria.forEach((c, i) => {
   const div = document.createElement("div");
@@ -566,7 +667,7 @@ criteria.forEach((_, i) => {
   document.getElementById("crit" + i).addEventListener("input", updateTotal);
 });
 
-/* ===== ПРЕВЬЮ ФАЙЛА ===== */
+/* ===== ПРЕВЬЮ ===== */
 const fileInput = document.getElementById("memFile");
 const preview = document.getElementById("preview");
 fileInput.addEventListener("change", e => {
@@ -582,6 +683,11 @@ fileInput.addEventListener("change", e => {
 
 /* ===== СОХРАНЕНИЕ ===== */
 document.getElementById("saveBtn").addEventListener("click", async () => {
+  if (!currentUser) {
+    alert("Подожди секунду, идёт вход...");
+    return;
+  }
+
   const scores = getScores();
   const total = scores.reduce((a, b) => a + b, 0);
   const rank = (ranks.find(r => total >= r.min && total <= r.max) || {}).label || "";
@@ -591,6 +697,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     image: preview.style.display === "block" ? preview.src : "",
     desc: document.getElementById("memDesc").value.trim(),
     scores, total, rank,
+    authorId: currentUser.uid,
     createdAt: serverTimestamp()
   };
 
@@ -607,7 +714,12 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     await addDoc(memesCol, meme);
     resetForm();
     btn.textContent = "Сохранено ✓";
-    setTimeout(() => { btn.textContent = "Сохранить мем"; btn.disabled = false; }, 1000);
+    setTimeout(() => {
+      btn.textContent = "Сохранить мем";
+      btn.disabled = false;
+      // переключаемся на ленту после сохранения
+      document.querySelector('.tab[data-tab="fresh"]').click();
+    }, 800);
   } catch (e) {
     alert("Ошибка: " + e.message);
     btn.textContent = "Сохранить мем";
@@ -625,22 +737,46 @@ function resetForm() {
   updateTotal();
 }
 
-/* ===== ЖИВОЙ СПИСОК ===== */
+/* ===== ЖИВАЯ ПОДПИСКА ===== */
 const q = query(memesCol, orderBy("createdAt", "desc"));
 onSnapshot(q, (snapshot) => {
-  const list = [];
+  allMemes = [];
   snapshot.forEach(d => {
     const data = d.data();
-    // пропускаем тестовый документ
     if (data.test === "1" || data.test === 1) return;
-    list.push({ id: d.id, ...data });
+    allMemes.push({ id: d.id, ...data });
   });
+  renderAll();
+});
 
-  const box = document.getElementById("memList");
-  document.getElementById("count").textContent = list.length;
+function renderAll() {
+  const mine = allMemes.filter(m => currentUser && m.authorId === currentUser.uid);
+
+  // Свежие — уже отсортированы по createdAt desc
+  renderList("listFresh", allMemes, false);
+
+  // Топ — сортируем по total
+  const top = [...allMemes].sort((a, b) => (b.total || 0) - (a.total || 0));
+  renderList("listTop", top, false);
+
+  // Мои
+  renderList("listMine", mine, true);
+
+  // Бейджи
+  document.getElementById("badgeFresh").textContent = allMemes.length;
+  document.getElementById("badgeTop").textContent = allMemes.length;
+  document.getElementById("badgeMine").textContent = mine.length;
+}
+
+function renderList(containerId, list, showDelete) {
+  const box = document.getElementById(containerId);
 
   if (!list.length) {
-    box.innerHTML = '<div class="empty">Пока ничего не оценено</div>';
+    box.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">${showDelete ? "📝" : "🖼️"}</div>
+        ${showDelete ? "Ты ещё ничего не добавил" : "Пока ничего не оценено"}
+      </div>`;
     return;
   }
 
@@ -671,12 +807,15 @@ onSnapshot(q, (snapshot) => {
         <div class="mem-score-num">${m.total}</div>
         <div class="mem-score-rank">${m.rank}</div>
       </div>
-      <button class="delete-btn" data-id="${m.id}">✕</button>
+      ${showDelete ? `<button class="delete-btn" data-id="${m.id}">✕</button>` : ""}
     `;
-    div.querySelector(".delete-btn").addEventListener("click", () => deleteMeme(m.id));
+
+    const delBtn = div.querySelector(".delete-btn");
+    if (delBtn) delBtn.addEventListener("click", () => deleteMeme(m.id));
+
     box.appendChild(div);
   });
-});
+}
 
 function escapeHtml(str) {
   if (!str) return "";
@@ -694,7 +833,6 @@ async function deleteMeme(id) {
   }
 }
 
-/* ===== СТАРТ ===== */
 updateTotal();
 </script>
 </body>
