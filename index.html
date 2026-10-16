@@ -6,7 +6,6 @@
 <title>Мемометр</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg: #0a0a0a;
     --surface: rgba(20, 20, 20, 0.78);
@@ -22,9 +21,7 @@
     --red: #f87171;
     --green: #34d399;
   }
-
   html, body { height: 100%; }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: var(--text);
@@ -36,7 +33,6 @@
     background: var(--bg);
     overflow-x: hidden;
   }
-
   body::before {
     content: "";
     position: fixed;
@@ -48,7 +44,6 @@
     z-index: -2;
     transform: scale(1.1);
   }
-
   body::after {
     content: "";
     position: fixed;
@@ -59,9 +54,7 @@
     z-index: -1;
     pointer-events: none;
   }
-
   .container { max-width: 720px; margin: 0 auto; position: relative; }
-
   header { margin-bottom: 24px; text-align: center; }
   header h1 {
     font-size: 30px;
@@ -73,595 +66,245 @@
     -webkit-text-fill-color: transparent;
     display: inline-block;
   }
-  header p {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 6px;
-    letter-spacing: 0.02em;
-  }
+  header p { color: var(--muted); font-size: 13px; margin-top: 6px; letter-spacing: 0.02em; }
 
-  /* ===== ТАБЫ ===== */
   .tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 6px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    display: flex; gap: 6px; margin-bottom: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 6px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   }
-
   .tab {
-    flex: 1;
-    padding: 11px 10px;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: all 0.2s;
-    font-family: inherit;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    flex: 1; padding: 11px 10px; border: none; background: transparent;
+    color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;
+    border-radius: 10px; transition: all 0.2s; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
   }
   .tab:hover { color: var(--text-strong); background: rgba(255,255,255,0.03); }
   .tab.active {
-    background: var(--gold-dim);
-    color: var(--gold-soft);
+    background: var(--gold-dim); color: var(--gold-soft);
     box-shadow: 0 0 0 1px var(--border-hover) inset;
   }
   .tab .badge {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.06);
-    color: var(--muted);
-    font-weight: 700;
-    min-width: 20px;
-    text-align: center;
+    font-size: 10px; padding: 2px 7px; border-radius: 10px;
+    background: rgba(255,255,255,0.06); color: var(--muted);
+    font-weight: 700; min-width: 20px; text-align: center;
   }
-  .tab.active .badge {
-    background: rgba(212,175,55,0.2);
-    color: var(--gold-soft);
-  }
+  .tab.active .badge { background: rgba(212,175,55,0.2); color: var(--gold-soft); }
 
   .tab-panel { display: none; }
   .tab-panel.active { display: block; animation: fadeIn 0.2s ease; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 26px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.05) inset,
-      0 20px 60px rgba(0,0,0,0.5);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 26px; margin-bottom: 20px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 20px 60px rgba(0,0,0,0.5);
   }
 
   label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    display: block; font-size: 12px; font-weight: 600; color: var(--muted);
+    margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em;
   }
-
   input[type="text"], input[type="url"], textarea {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: rgba(0,0,0,0.35);
-    color: var(--text-strong);
-    font-size: 14px;
-    font-family: inherit;
+    width: 100%; padding: 12px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: rgba(0,0,0,0.35);
+    color: var(--text-strong); font-size: 14px; font-family: inherit;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   input::placeholder, textarea::placeholder { color: #555; }
   input:focus, textarea:focus {
-    outline: none;
-    border-color: var(--border-hover);
+    outline: none; border-color: var(--border-hover);
     box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
   }
   textarea { resize: vertical; min-height: 70px; }
 
   .field { margin-bottom: 18px; }
   .field:last-child { margin-bottom: 0; }
-
-  .char-count {
-    font-size: 11px;
-    color: var(--muted);
-    text-align: right;
-    margin-top: 4px;
-    font-variant-numeric: tabular-nums;
-  }
+  .char-count { font-size: 11px; color: var(--muted); text-align: right; margin-top: 4px; font-variant-numeric: tabular-nums; }
 
   input[type="file"] { display: none; }
-
   .file-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text-strong);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text-strong); font-size: 13px;
+    font-weight: 500; cursor: pointer; transition: all 0.2s;
   }
-  .file-btn:hover {
-    background: var(--gold-dim);
-    border-color: var(--border-hover);
-    color: var(--gold-soft);
-  }
+  .file-btn:hover { background: var(--gold-dim); border-color: var(--border-hover); color: var(--gold-soft); }
 
   .preview {
-    max-width: 100%;
-    max-height: 260px;
-    margin-top: 12px;
-    border-radius: 10px;
-    display: none;
-    border: 1px solid var(--border);
+    max-width: 100%; max-height: 260px; margin-top: 12px;
+    border-radius: 10px; display: none; border: 1px solid var(--border);
   }
 
   .criteria-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 16px;
-    padding-top: 22px;
-    border-top: 1px solid var(--border);
-    margin-top: 22px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 16px; padding-top: 22px; border-top: 1px solid var(--border); margin-top: 22px;
   }
-  .criteria-header h2 {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-strong);
-  }
-  .criteria-header span {
-    font-size: 11px;
-    color: var(--gold-soft);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
+  .criteria-header h2 { font-size: 15px; font-weight: 600; color: var(--text-strong); }
+  .criteria-header span { font-size: 11px; color: var(--gold-soft); letter-spacing: 0.06em; text-transform: uppercase; }
 
-  .criterion {
-    padding: 15px 0;
-    border-bottom: 1px solid var(--border);
-  }
+  .criterion { padding: 15px 0; border-bottom: 1px solid var(--border); }
   .criterion:last-child { border-bottom: none; }
-
-  .criterion-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .criterion-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-strong);
-  }
-  .criterion-desc {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .criterion-val {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--gold-soft);
-    min-width: 34px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
+  .criterion-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .criterion-name { font-size: 14px; font-weight: 500; color: var(--text-strong); }
+  .criterion-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .criterion-val { font-size: 16px; font-weight: 700; color: var(--gold-soft); min-width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
 
   input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 4px;
-    border-radius: 2px;
-    background: rgba(255,255,255,0.08);
-    outline: none;
-    cursor: pointer;
+    -webkit-appearance: none; appearance: none; width: 100%; height: 4px;
+    border-radius: 2px; background: rgba(255,255,255,0.08); outline: none; cursor: pointer;
   }
   input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 10px rgba(212,175,55,0.5);
-    cursor: pointer;
+    -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+    border-radius: 50%; background: #ffffff; border: 2px solid var(--gold);
+    box-shadow: 0 0 10px rgba(212,175,55,0.5); cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s;
   }
   input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.15);
-    box-shadow: 0 0 16px rgba(212,175,55,0.9);
+    transform: scale(1.15); box-shadow: 0 0 16px rgba(212,175,55,0.9);
   }
   input[type="range"]::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 10px rgba(212,175,55,0.5);
-    cursor: pointer;
+    width: 16px; height: 16px; border-radius: 50%; background: #ffffff;
+    border: 2px solid var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.5); cursor: pointer;
   }
 
   .total-box {
-    margin-top: 24px;
-    padding: 22px;
+    margin-top: 24px; padding: 22px;
     background: linear-gradient(180deg, rgba(212,175,55,0.06), rgba(212,175,55,0.02));
-    border: 1px solid var(--border-hover);
-    border-radius: 14px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+    border: 1px solid var(--border-hover); border-radius: 14px;
+    text-align: center; position: relative; overflow: hidden;
   }
   .total-box::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    opacity: 0.5;
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.5;
   }
   .total-score {
-    font-size: 46px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-strong);
-    text-shadow: 0 0 24px rgba(212,175,55,0.25);
-    line-height: 1;
+    font-size: 46px; font-weight: 800; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums; color: var(--text-strong);
+    text-shadow: 0 0 24px rgba(212,175,55,0.25); line-height: 1;
   }
-  .total-score small {
-    font-size: 18px;
-    color: var(--gold-soft);
-    font-weight: 500;
-    margin-left: 4px;
-  }
+  .total-score small { font-size: 18px; color: var(--gold-soft); font-weight: 500; margin-left: 4px; }
   .total-rank {
-    font-size: 13px;
-    color: var(--gold-soft);
-    margin-top: 8px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-weight: 600;
+    font-size: 13px; color: var(--gold-soft); margin-top: 8px;
+    letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
   }
 
   .btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(180deg, #ffffff, #e8e8e8);
-    color: #0a0a0a;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 20px;
-    font-family: inherit;
-    letter-spacing: 0.02em;
+    width: 100%; padding: 15px; border: none; border-radius: 12px;
+    background: linear-gradient(180deg, #ffffff, #e8e8e8); color: #0a0a0a;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    margin-top: 20px; font-family: inherit; letter-spacing: 0.02em;
     box-shadow: 0 4px 20px rgba(255,255,255,0.08);
   }
   .btn:hover {
     background: linear-gradient(180deg, #ffffff, #d4af37);
-    box-shadow: 0 6px 28px rgba(212,175,55,0.35);
-    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(212,175,55,0.35); transform: translateY(-1px);
   }
   .btn:active { transform: translateY(0); }
   .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border-hover);
-    color: var(--gold-soft);
-    box-shadow: none;
-  }
-  .btn-ghost:hover {
-    background: var(--gold-dim);
-    color: var(--gold-soft);
-  }
-
-  /* ===== КАРТОЧКА МЕМА ===== */
   .mem-item {
-    display: flex;
-    gap: 14px;
-    padding: 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 10px;
-    align-items: flex-start;
-    transition: border-color 0.2s, background 0.2s;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    display: flex; gap: 14px; padding: 14px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px;
+    align-items: flex-start; transition: border-color 0.2s;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   }
   .mem-item:hover { border-color: var(--border-hover); }
-
   .mem-item img {
-    width: 64px;
-    height: 64px;
-    border-radius: 8px;
-    object-fit: cover;
-    flex-shrink: 0;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
+    width: 64px; height: 64px; border-radius: 8px; object-fit: cover;
+    flex-shrink: 0; background: var(--surface-2); border: 1px solid var(--border);
   }
-
   .mem-info { flex: 1; min-width: 0; }
-
   .mem-title {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    word-break: break-word;
-    color: var(--text-strong);
-    line-height: 1.3;
+    font-size: 15px; font-weight: 600; margin-bottom: 6px;
+    word-break: break-word; color: var(--text-strong); line-height: 1.3;
   }
-  .mem-title a {
-    color: var(--gold-soft);
-    text-decoration: none;
-    font-size: 12px;
-    margin-left: 6px;
-    font-weight: 400;
-  }
+  .mem-title a { color: var(--gold-soft); text-decoration: none; font-size: 12px; margin-left: 6px; font-weight: 400; }
   .mem-title a:hover { text-decoration: underline; }
-
   .mem-review {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.55;
-    margin-bottom: 8px;
-    padding: 9px 12px;
-    background: rgba(255,255,255,0.025);
-    border-left: 2px solid var(--gold);
-    border-radius: 4px;
-    white-space: pre-wrap;
-    word-break: break-word;
-    opacity: 0.92;
+    font-size: 13px; color: var(--text); line-height: 1.55; margin-bottom: 8px;
+    padding: 9px 12px; background: rgba(255,255,255,0.025);
+    border-left: 2px solid var(--gold); border-radius: 4px;
+    white-space: pre-wrap; word-break: break-word; opacity: 0.92;
   }
-
-  .mem-scores {
-    font-size: 11px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 4px;
-  }
-  .mem-date {
-    font-size: 11px;
-    color: #525252;
-  }
-
-  .mem-score {
-    text-align: right;
-    flex-shrink: 0;
-    min-width: 80px;
-  }
+  .mem-date { font-size: 11px; color: #525252; }
+  .mem-score { text-align: right; flex-shrink: 0; min-width: 86px; }
   .mem-score-num {
-    font-size: 24px;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    color: var(--gold-soft);
-    line-height: 1;
-    text-shadow: 0 0 16px rgba(212,175,55,0.3);
+    font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums;
+    color: var(--gold-soft); line-height: 1; text-shadow: 0 0 16px rgba(212,175,55,0.3);
   }
   .mem-score-rank {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 5px;
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 10px; color: var(--muted); margin-top: 5px;
+    white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em;
   }
-  .mem-score-votes {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 3px;
-  }
+  .mem-score-votes { font-size: 10px; color: var(--muted); margin-top: 3px; }
 
   .delete-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    width: 28px; height: 28px; border-radius: 8px; cursor: pointer; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     transition: all 0.2s;
   }
-  .delete-btn:hover {
-    border-color: var(--red);
-    color: var(--red);
-    background: rgba(248,113,113,0.08);
-  }
+  .delete-btn:hover { border-color: var(--red); color: var(--red); background: rgba(248,113,113,0.08); }
 
-  /* ===== КНОПКА "ОЦЕНИТЬ" и "ПОКАЗАТЬ ОЦЕНКИ" ===== */
-  .mem-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-  }
+  .mem-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
   .mini-btn {
-    font-size: 11px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.03);
-    color: var(--text);
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 600;
-    transition: all 0.2s;
-    letter-spacing: 0.02em;
+    font-size: 11px; padding: 6px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+    color: var(--text); cursor: pointer; font-family: inherit; font-weight: 600;
+    transition: all 0.2s; letter-spacing: 0.02em;
   }
-  .mini-btn:hover {
-    border-color: var(--border-hover);
-    background: var(--gold-dim);
-    color: var(--gold-soft);
-  }
-  .mini-btn.voted {
-    color: var(--green);
-    border-color: rgba(52,211,153,0.3);
-    cursor: default;
-  }
-  .mini-btn.voted:hover { background: rgba(255,255,255,0.03); }
+  .mini-btn:hover { border-color: var(--border-hover); background: var(--gold-dim); color: var(--gold-soft); }
+  .mini-btn.voted { color: var(--green); border-color: rgba(52,211,153,0.3); cursor: default; }
+  .mini-btn.voted:hover { background: rgba(255,255,255,0.03); color: var(--green); }
 
-  /* ===== СПИСОК ГОЛОСОВ ===== */
   .votes-list {
-    display: none;
-    margin-top: 10px;
-    padding: 10px 12px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 12px;
+    display: none; margin-top: 10px; padding: 10px 12px;
+    background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+    border-radius: 8px; font-size: 12px;
   }
   .votes-list.open { display: block; }
   .vote-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
   }
   .vote-row:last-child { border-bottom: none; }
-  .vote-user {
-    color: var(--muted);
-    font-size: 11px;
-    font-family: ui-monospace, monospace;
-  }
-  .vote-score {
-    font-weight: 700;
-    color: var(--gold-soft);
-    font-variant-numeric: tabular-nums;
-  }
-  .vote-score small {
-    color: var(--muted);
-    font-weight: 400;
-    font-size: 10px;
-    margin-left: 4px;
-  }
-  .votes-empty {
-    color: var(--muted);
-    font-size: 12px;
-    text-align: center;
-    padding: 8px;
-  }
+  .vote-user { color: var(--muted); font-size: 11px; font-family: ui-monospace, monospace; }
+  .vote-score { font-weight: 700; color: var(--gold-soft); font-variant-numeric: tabular-nums; }
+  .vote-score small { color: var(--muted); font-weight: 400; font-size: 10px; margin-left: 4px; }
+  .vote-you { color: var(--green); font-size: 10px; margin-left: 6px; font-family: inherit; }
+  .votes-empty { color: var(--muted); font-size: 12px; text-align: center; padding: 8px; }
 
-  /* ===== МОДАЛКА ===== */
   .modal-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.15s ease;
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    z-index: 100; align-items: center; justify-content: center; padding: 20px;
   }
   .modal-backdrop.open { display: flex; }
-
   .modal {
-    background: #141414;
-    border: 1px solid var(--border-hover);
-    border-radius: 18px;
-    padding: 24px;
-    width: 100%;
-    max-width: 560px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    background: #141414; border: 1px solid var(--border-hover); border-radius: 18px;
+    padding: 24px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8); position: relative;
     animation: slideUp 0.2s ease;
   }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .modal h2 {
-    font-size: 18px;
-    margin-bottom: 4px;
-    color: var(--text-strong);
-  }
-  .modal-sub {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 18px;
-    word-break: break-word;
-  }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .modal h2 { font-size: 18px; margin-bottom: 4px; color: var(--text-strong); padding-right: 30px; }
+  .modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 18px; word-break: break-word; }
   .modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: transparent;
-    border: none;
-    color: var(--muted);
-    font-size: 22px;
-    cursor: pointer;
-    line-height: 1;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: all 0.2s;
+    position: absolute; top: 14px; right: 14px; background: transparent; border: none;
+    color: var(--muted); font-size: 24px; cursor: pointer; line-height: 1;
+    padding: 4px 10px; border-radius: 6px; transition: all 0.2s;
   }
   .modal-close:hover { color: var(--text-strong); background: rgba(255,255,255,0.05); }
 
-  .modal-wrap { position: relative; }
-
-  .modal .btn {
-    margin-top: 16px;
-  }
-
   .empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-    font-size: 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   }
-  .empty-icon {
-    font-size: 42px;
-    margin-bottom: 12px;
-    opacity: 0.4;
-  }
+  .empty-icon { font-size: 42px; margin-bottom: 12px; opacity: 0.4; }
 
   @media (max-width: 500px) {
     body { padding: 20px 12px; }
@@ -717,7 +360,7 @@
 
       <div class="field">
         <label>Рецензия</label>
-        <textarea id="memDesc" placeholder="Почему такая оценка? Что зашло, что нет, насколько смешно..." maxlength="1000"></textarea>
+        <textarea id="memDesc" placeholder="Почему такая оценка? Что зашло, что нет..." maxlength="1000"></textarea>
         <div class="char-count" id="descCount">0 / 1000</div>
       </div>
 
@@ -726,11 +369,11 @@
         <span>0 – 15 каждый</span>
       </div>
 
-      <div id="criteria"></div>
+      <div id="addCriteria"></div>
 
       <div class="total-box">
-        <div class="total-score" id="total">0<small>/ 90</small></div>
-        <div class="total-rank" id="rank">—</div>
+        <div class="total-score" id="addTotal">0<small>/ 90</small></div>
+        <div class="total-rank" id="addRank">—</div>
       </div>
 
       <button class="btn" id="saveBtn">Сохранить мем</button>
@@ -742,9 +385,8 @@
   </div>
 </div>
 
-<!-- МОДАЛКА ГОЛОСОВАНИЯ -->
 <div class="modal-backdrop" id="voteModal">
-  <div class="modal modal-wrap">
+  <div class="modal">
     <button class="modal-close" id="voteClose">×</button>
     <h2>Оценить мем</h2>
     <div class="modal-sub" id="voteModalTitle"></div>
@@ -760,8 +402,8 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, deleteDoc, doc, getDoc, setDoc,
-  onSnapshot, query, orderBy, serverTimestamp, collectionGroup
+  getFirestore, collection, addDoc, deleteDoc, doc, setDoc, getDoc,
+  onSnapshot, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
   getAuth, signInAnonymously, onAuthStateChanged
@@ -783,10 +425,10 @@ const auth = getAuth(app);
 const memesCol = collection(db, "memes");
 
 let currentUser = null;
-let allMemes = [];         // [{ id, ...data, votes: [...], avg, votesCount, myVote }]
+let allMemes = [];  // [{ id, title, desc, url, image, authorId, createdAt, votes: [{uid, total, scores}], avg, votesCount, myVote }]
 
 signInAnonymously(auth).catch(err => {
-  console.error("Ошибка входа:", err);
+  console.error("Auth error:", err);
   alert("Не удалось войти. Проверь Anonymous в Firebase Auth.");
 });
 
@@ -803,7 +445,6 @@ const panels = {
   add:   document.getElementById("panel-add"),
   mine:  document.getElementById("panel-mine")
 };
-
 tabs.forEach(t => {
   t.addEventListener("click", () => {
     tabs.forEach(x => x.classList.remove("active"));
@@ -822,7 +463,6 @@ const criteria = [
   { key: "Повторяемость",      desc: "Сколько раз ещё рассмешит" },
   { key: "Реакция при повторе",desc: "Смешно ли при пересмотре" }
 ];
-
 const ranks = [
   { min: 0,  max: 20, label: "Не прикол" },
   { min: 21, max: 40, label: "Слабенько" },
@@ -831,13 +471,12 @@ const ranks = [
   { min: 76, max: 89, label: "В сохранёнки" },
   { min: 90, max: 90, label: "Мем года" }
 ];
-
 function getRank(total) {
   return (ranks.find(r => total >= r.min && total <= r.max) || {}).label || "";
 }
 
-/* ===== ГЕНЕРАЦИЯ СЛАЙДЕРОВ (переиспользуется) ===== */
-function buildSliders(container, idPrefix) {
+/* ===== СЛАЙДЕРЫ ===== */
+function buildSliders(container, prefix) {
   container.innerHTML = "";
   criteria.forEach((c, i) => {
     const div = document.createElement("div");
@@ -848,67 +487,59 @@ function buildSliders(container, idPrefix) {
           <div class="criterion-name">${c.key}</div>
           <div class="criterion-desc">${c.desc}</div>
         </div>
-        <div class="criterion-val" id="${idPrefix}val${i}">0</div>
+        <div class="criterion-val" id="${prefix}val${i}">0</div>
       </div>
-      <input type="range" min="0" max="15" value="0" id="${idPrefix}crit${i}">
+      <input type="range" min="0" max="15" value="0" id="${prefix}crit${i}">
     `;
     container.appendChild(div);
   });
 }
 
-/* ===== ФОРМА ДОБАВЛЕНИЯ ===== */
-buildSliders(document.getElementById("criteria"), "add");
-
-function getAddScores() {
-  return criteria.map((_, i) => +document.getElementById("addcrit" + i).value);
+function wireSliderUpdates(prefix, onUpdate) {
+  criteria.forEach((_, i) => {
+    document.getElementById(prefix + "crit" + i).addEventListener("input", onUpdate);
+  });
 }
 
-function updateAddTotal() {
+function readScores(prefix) {
+  return criteria.map((_, i) => +document.getElementById(prefix + "crit" + i).value);
+}
+
+function paintValues(prefix) {
   let total = 0;
   criteria.forEach((_, i) => {
-    const v = +document.getElementById("addcrit" + i).value;
-    document.getElementById("addval" + i).textContent = v;
+    const v = +document.getElementById(prefix + "crit" + i).value;
+    document.getElementById(prefix + "val" + i).textContent = v;
     total += v;
   });
-  document.getElementById("total").innerHTML = `${total}<small>/ 90</small>`;
-  document.getElementById("rank").textContent = getRank(total);
+  return total;
 }
 
-criteria.forEach((_, i) => {
-  document.getElementById("addcrit" + i).addEventListener("input", updateAddTotal);
-});
+/* ===== ФОРМА ДОБАВЛЕНИЯ ===== */
+buildSliders(document.getElementById("addCriteria"), "add");
+function updateAddTotal() {
+  const total = paintValues("add");
+  document.getElementById("addTotal").innerHTML = `${total}<small>/ 90</small>`;
+  document.getElementById("addRank").textContent = getRank(total);
+}
+wireSliderUpdates("add", updateAddTotal);
+updateAddTotal();
 
-/* ===== МОДАЛКА ГОЛОСОВАНИЯ ===== */
+/* ===== МОДАЛКА ===== */
 buildSliders(document.getElementById("voteCriteria"), "vote");
-
 let voteTargetMemeId = null;
 
-function getVoteScores() {
-  return criteria.map((_, i) => +document.getElementById("votecrit" + i).value);
-}
-
 function updateVoteTotal() {
-  let total = 0;
-  criteria.forEach((_, i) => {
-    const v = +document.getElementById("votecrit" + i).value;
-    document.getElementById("voteval" + i).textContent = v;
-    total += v;
-  });
+  const total = paintValues("vote");
   document.getElementById("voteTotal").innerHTML = `${total}<small>/ 90</small>`;
   document.getElementById("voteRank").textContent = getRank(total);
 }
-
-criteria.forEach((_, i) => {
-  document.getElementById("votecrit" + i).addEventListener("input", updateVoteTotal);
-});
+wireSliderUpdates("vote", updateVoteTotal);
 
 function openVoteModal(memeId) {
   const meme = allMemes.find(m => m.id === memeId);
   if (!meme) return;
-  if (meme.myVote) {
-    alert("Ты уже голосовал за этот мем");
-    return;
-  }
+  if (meme.myVote) { alert("Ты уже голосовал за этот мем"); return; }
 
   voteTargetMemeId = memeId;
   document.getElementById("voteModalTitle").textContent = meme.title || "(без названия)";
@@ -918,4 +549,310 @@ function openVoteModal(memeId) {
   });
   updateVoteTotal();
 
-  document.getElementById
+  document.getElementById("voteModal").classList.add("open");
+}
+
+function closeVoteModal() {
+  document.getElementById("voteModal").classList.remove("open");
+  voteTargetMemeId = null;
+}
+
+document.getElementById("voteClose").addEventListener("click", closeVoteModal);
+document.getElementById("voteModal").addEventListener("click", (e) => {
+  if (e.target.id === "voteModal") closeVoteModal();
+});
+
+document.getElementById("voteSubmit").addEventListener("click", async () => {
+  if (!voteTargetMemeId || !currentUser) return;
+
+  const scores = readScores("vote");
+  const total = scores.reduce((a, b) => a + b, 0);
+
+  const btn = document.getElementById("voteSubmit");
+  btn.disabled = true;
+  btn.textContent = "Отправка...";
+
+  try {
+    await setDoc(doc(db, "memes", voteTargetMemeId, "votes", currentUser.uid), {
+      scores,
+      total,
+      authorId: currentUser.uid,
+      createdAt: serverTimestamp()
+    });
+    closeVoteModal();
+    btn.textContent = "Отправить оценку";
+    btn.disabled = false;
+  } catch (e) {
+    alert("Ошибка: " + e.message);
+    btn.textContent = "Отправить оценку";
+    btn.disabled = false;
+  }
+});
+
+/* ===== ПРЕВЬЮ ===== */
+const fileInput = document.getElementById("memFile");
+const preview = document.getElementById("preview");
+fileInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    preview.src = ev.target.result;
+    preview.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ===== СЧЁТЧИКИ СИМВОЛОВ ===== */
+const memTitleEl = document.getElementById("memTitle");
+const memDescEl = document.getElementById("memDesc");
+memTitleEl.addEventListener("input", () => {
+  document.getElementById("titleCount").textContent = `${memTitleEl.value.length} / 100`;
+});
+memDescEl.addEventListener("input", () => {
+  document.getElementById("descCount").textContent = `${memDescEl.value.length} / 1000`;
+});
+
+/* ===== СОХРАНЕНИЕ МЕМА ===== */
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  if (!currentUser) { alert("Подожди секунду, идёт вход..."); return; }
+
+  const scores = readScores("add");
+  const total = scores.reduce((a, b) => a + b, 0);
+
+  const meme = {
+    url: document.getElementById("memUrl").value.trim(),
+    image: preview.style.display === "block" ? preview.src : "",
+    title: memTitleEl.value.trim(),
+    desc: memDescEl.value.trim(),
+    authorId: currentUser.uid,
+    createdAt: serverTimestamp()
+  };
+
+  if (!meme.title && !meme.url && !meme.image) {
+    alert("Добавь хотя бы название, ссылку или картинку");
+    return;
+  }
+
+  const btn = document.getElementById("saveBtn");
+  btn.disabled = true;
+  btn.textContent = "Сохранение...";
+
+  try {
+    // 1. Создаём мем
+    const ref = await addDoc(memesCol, meme);
+    // 2. Сразу пишем голос автора
+    await setDoc(doc(db, "memes", ref.id, "votes", currentUser.uid), {
+      scores, total,
+      authorId: currentUser.uid,
+      createdAt: serverTimestamp()
+    });
+    resetForm();
+    btn.textContent = "Сохранено ✓";
+    setTimeout(() => {
+      btn.textContent = "Сохранить мем";
+      btn.disabled = false;
+      document.querySelector('.tab[data-tab="fresh"]').click();
+    }, 800);
+  } catch (e) {
+    alert("Ошибка: " + e.message);
+    btn.textContent = "Сохранить мем";
+    btn.disabled = false;
+  }
+});
+
+function resetForm() {
+  document.getElementById("memUrl").value = "";
+  memTitleEl.value = "";
+  memDescEl.value = "";
+  document.getElementById("titleCount").textContent = "0 / 100";
+  document.getElementById("descCount").textContent = "0 / 1000";
+  document.getElementById("memFile").value = "";
+  preview.src = "";
+  preview.style.display = "none";
+  criteria.forEach((_, i) => document.getElementById("addcrit" + i).value = 0);
+  updateAddTotal();
+}
+
+/* ===== ЖИВОЙ СПИСОК МЕМОВ ===== */
+const memesQuery = query(memesCol, orderBy("createdAt", "desc"));
+
+onSnapshot(memesQuery, (snapshot) => {
+  const memes = [];
+  snapshot.forEach(d => {
+    const data = d.data();
+    if (data.test === "1" || data.test === 1) return;
+    memes.push({ id: d.id, ...data, votes: [], loaded: false });
+  });
+
+  allMemes = memes;
+  memes.forEach(m => subscribeVotes(m));
+
+  renderAll();
+});
+
+function subscribeVotes(meme) {
+  const votesCol = collection(db, "memes", meme.id, "votes");
+  onSnapshot(votesCol, (snap) => {
+    const votes = [];
+    snap.forEach(v => votes.push({ uid: v.id, ...v.data() }));
+    meme.votes = votes;
+    meme.votesCount = votes.length;
+    meme.avg = votes.length
+      ? votes.reduce((s, v) => s + (v.total || 0), 0) / votes.length
+      : 0;
+    meme.myVote = currentUser ? votes.find(v => v.uid === currentUser.uid) : null;
+    meme.loaded = true;
+    renderAll();
+  });
+}
+
+function renderAll() {
+  const mine = allMemes.filter(m => currentUser && m.authorId === currentUser.uid);
+
+  renderList("listFresh", allMemes, false);
+
+  const top = [...allMemes].sort((a, b) => (b.avg || 0) - (a.avg || 0));
+  renderList("listTop", top, false);
+
+  renderList("listMine", mine, true);
+
+  document.getElementById("badgeFresh").textContent = allMemes.length;
+  document.getElementById("badgeTop").textContent = allMemes.length;
+  document.getElementById("badgeMine").textContent = mine.length;
+}
+
+function renderList(containerId, list, showDelete) {
+  const box = document.getElementById(containerId);
+
+  if (!list.length) {
+    box.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">${showDelete ? "📝" : "🖼️"}</div>
+        ${showDelete ? "Ты ещё ничего не добавил" : "Пока ничего не оценено"}
+      </div>`;
+    return;
+  }
+
+  box.innerHTML = "";
+  list.forEach(m => {
+    const div = document.createElement("div");
+    div.className = "mem-item";
+
+    const img = m.image ? `<img src="${m.image}" alt="">` : "";
+    const link = m.url ? `<a href="${m.url}" target="_blank" rel="noopener">открыть ↗</a>` : "";
+    const title = m.title || "(без названия)";
+    const reviewHtml = m.desc ? `<div class="mem-review">${escapeHtml(m.desc)}</div>` : "";
+
+    let dateStr = "";
+    if (m.createdAt?.toDate) {
+      dateStr = m.createdAt.toDate().toLocaleString("ru-RU", {
+        day: "2-digit", month: "2-digit", year: "2-digit",
+        hour: "2-digit", minute: "2-digit"
+      });
+    }
+
+    const avg = m.avg || 0;
+    const avgLabel = m.votesCount ? avg.toFixed(1) : "—";
+    const rank = m.votesCount ? getRank(Math.round(avg)) : "";
+    const voted = !!m.myVote;
+
+    // Список голосов
+    let votesHtml = "";
+    if (m.votesCount) {
+      const rows = m.votes
+        .sort((a, b) => (b.total || 0) - (a.total || 0))
+        .map(v => {
+          const isYou = currentUser && v.uid === currentUser.uid;
+          const shortId = "аноним-" + v.uid.slice(0, 4);
+          return `<div class="vote-row">
+            <span class="vote-user">${shortId}${isYou ? '<span class="vote-you">это ты</span>' : ""}</span>
+            <span class="vote-score">${v.total}<small>/90</small></span>
+          </div>`;
+        }).join("");
+      votesHtml = `<div class="votes-list" data-votes-for="${m.id}">${rows}</div>`;
+    } else {
+      votesHtml = `<div class="votes-list" data-votes-for="${m.id}"><div class="votes-empty">Пока нет оценок</div></div>`;
+    }
+
+    div.innerHTML = `
+      ${img}
+      <div class="mem-info">
+        <div class="mem-title">${escapeHtml(title)}${link}</div>
+        ${reviewHtml}
+        <div class="mem-actions">
+          <button class="mini-btn ${voted ? "voted" : ""}" data-vote="${m.id}">
+            ${voted ? "✓ Ты оценил" : "Оценить"}
+          </button>
+          <button class="mini-btn" data-toggle-votes="${m.id}">
+            Оценки (${m.votesCount || 0})
+          </button>
+        </div>
+        ${votesHtml}
+        <div class="mem-date" style="margin-top:8px">${dateStr}</div>
+      </div>
+      <div class="mem-score">
+        <div class="mem-score-num">${avgLabel}</div>
+        <div class="mem-score-rank">${rank}</div>
+        <div class="mem-score-votes">${m.votesCount || 0} голос${plural(m.votesCount)}</div>
+      </div>
+      ${showDelete ? `<button class="delete-btn" data-del="${m.id}">✕</button>` : ""}
+    `;
+
+    // обработчики
+    const voteBtn = div.querySelector("[data-vote]");
+    if (voteBtn) {
+      voteBtn.addEventListener("click", () => {
+        if (m.myVote) return;
+        openVoteModal(m.id);
+      });
+    }
+
+    const toggleBtn = div.querySelector("[data-toggle-votes]");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        const list = div.querySelector(".votes-list");
+        if (list) list.classList.toggle("open");
+      });
+    }
+
+    const delBtn = div.querySelector("[data-del]");
+    if (delBtn) delBtn.addEventListener("click", () => deleteMeme(m.id));
+
+    box.appendChild(div);
+  });
+}
+
+function plural(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "";
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return "а";
+  return "ов";
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+async function deleteMeme(id) {
+  if (!confirm("Удалить этот мем?")) return;
+  try {
+    // Сначала голоса, потом сам мем
+    const meme = allMemes.find(m => m.id === id);
+    if (meme && meme.votes) {
+      for (const v of meme.votes) {
+        try { await deleteDoc(doc(db, "memes", id, "votes", v.uid)); } catch(_) {}
+      }
+    }
+    await deleteDoc(doc(db, "memes", id));
+  } catch (e) {
+    alert("Ошибка удаления: " + e.message);
+  }
+}
+</script>
+</body>
+</html>
