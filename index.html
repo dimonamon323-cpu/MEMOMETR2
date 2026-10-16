@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мемометр</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: rgba(20, 20, 20, 0.78);
+    --surface-2: rgba(30, 30, 30, 0.85);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(212, 175, 55, 0.35);
+    --text: #ededed;
+    --text-strong: #ffffff;
+    --muted: #8a8a8a;
+    --gold: #d4af37;
+    --gold-soft: #e8c86a;
+    --gold-dim: rgba(212, 175, 55, 0.15);
+    --green: #34d399;
+    --red: #f87171;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    position: relative;
+    background: var(--bg);
+    overflow-x: hidden;
+  }
+
+  /* Размытый фон */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -40px;
+    background-image: url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover;
+    background-position: center;
+    filter: blur(22px) brightness(0.32) saturate(0.6);
+    z-index: -2;
+    transform: scale(1.1);
+  }
+
+  /* Тёмный градиент поверх фона */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at top, rgba(212,175,55,0.08), transparent 55%),
+      linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; position: relative; }
+
+  header { margin-bottom: 32px; text-align: center; }
+  header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    background: linear-gradient(180deg, #ffffff 0%, #d4af37 130%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 26px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.05) inset,
+      0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  input[type="text"], input[type="url"], textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.35);
+    color: var(--text-strong);
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input::placeholder, textarea::placeholder { color: #555; }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--border-hover);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+  }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+
+  input[type="file"] { display: none; }
+
+  .file-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-strong);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .file-btn:hover {
+    background: var(--gold-dim);
+    border-color: var(--border-hover);
+    color: var(--gold-soft);
+  }
+
+  .preview {
+    max-width: 100%;
+    max-height: 260px;
+    margin-top: 12px;
+    border-radius: 10px;
+    display: none;
+    border: 1px solid var(--border);
+  }
+
+  .criteria-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+    margin-top: 22px;
+  }
+  .criteria-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+  .criteria-header span {
+    font-size: 11px;
+    color: var(--gold-soft);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .criterion {
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .criterion:last-child { border-bottom: none; }
+
+  .criterion-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .criterion-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-strong);
+  }
+  .criterion-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .criterion-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold-soft);
+    min-width: 34px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.08);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 10px rgba(212,175,55,0.5);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 16px rgba(212,175,55,0.9);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 10px rgba(212,175,55,0.5);
+    cursor: pointer;
+  }
+
+  .total-box {
+    margin-top: 24px;
+    padding: 22px;
+    background: linear-gradient(180deg, rgba(212,175,55,0.06), rgba(212,175,55,0.02));
+    border: 1px solid var(--border-hover);
+    border-radius: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .total-box::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.5;
+  }
+  .total-score {
+    font-size: 46px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-strong);
+    text-shadow: 0 0 24px rgba(212,175,55,0.25);
+    line-height: 1;
+  }
+  .total-score small {
+    font-size: 18px;
+    color: var(--gold-soft);
+    font-weight: 500;
+    margin-left: 4px;
+  }
+  .total-rank {
+    font-size: 13px;
+    color: var(--gold-soft);
+    margin-top: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #ffffff, #e8e8e8);
+    color: #0a0a0a;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 20px;
+    font-family: inherit;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.08);
+  }
+  .btn:hover {
+    background: linear-gradient(180deg, #ffffff, #d4af37);
+    box-shadow: 0 6px 28px rgba(212,175,55,0.35);
+    transform: translateY(-1px);
+  }
+  .btn:active { transform: translateY(0); }
+
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .list-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+  .list-header span {
+    font-size: 12px;
+    color: var(--gold-soft);
+    background: var(--gold-dim);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-hover);
+    font-weight: 600;
+  }
+
+  .mem-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .mem-item:hover {
+    border-color: var(--border-hover);
+    background: rgba(0,0,0,0.5);
+  }
+
+  .mem-item img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+
+  .mem-info { flex: 1; min-width: 0; }
+  .mem-desc {
+    font-size: 14px;
+    margin-bottom: 4px;
+    word-break: break-word;
+    color: var(--text-strong);
+  }
+  .mem-desc a {
+    color: var(--gold-soft);
+    text-decoration: none;
+    font-size: 12px;
+    margin-left: 6px;
+  }
+  .mem-desc a:hover { text-decoration: underline; }
+  .mem-scores {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+  .mem-date {
+    font-size: 11px;
+    color: #525252;
+  }
+
+  .mem-score {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .mem-score-num {
+    font-size: 22px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--gold-soft);
+    line-height: 1;
+  }
+  .mem-score-rank {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .delete-btn:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(248,113,113,0.08);
+  }
+
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  @media (max-width: 500px) {
+    body { padding: 20px 12px; }
+    .card { padding: 18px; }
+    .total-score { font-size: 36px; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Мемометр</h1>
+    <p>Оцени мем по шести критериям · максимум 90</p>
+  </header>
+
+  <div class="card">
+    <div class="field">
+      <label>Ссылка на мем</label>
+      <input type="url" id="memUrl" placeholder="https://...">
+    </div>
+
+    <div class="field">
+      <label>Или изображение</label>
+      <label for="memFile" class="file-btn">📎 Выбрать файл</label>
+      <input type="file" id="memFile" accept="image/*">
+      <img id="preview" class="preview" alt="">
+    </div>
+
+    <div class="field">
+      <label>Описание</label>
+      <textarea id="memDesc" placeholder="Пара слов о меме..."></textarea>
+    </div>
+
+    <div class="criteria-header">
+      <h2>Критерии</h2>
+      <span>0 – 15 каждый</span>
+    </div>
+
+    <div id="criteria"></div>
+
+    <div class="total-box">
+      <div class="total-score" id="total">0<small>/ 90</small></div>
+      <div class="total-rank" id="rank">—</div>
+    </div>
+
+    <button class="btn" onclick="saveMeme()">Сохранить мем</button>
+  </div>
+
+  <div class="card">
+    <div class="list-header">
+      <h2>Сохранённые</h2>
+      <span id="count">0</span>
+    </div>
+    <div id="memList"></div>
+  </div>
+</div>
+
+<script>
+const criteria = [
+  { key: "Смех",               desc: "Засмеялся ли вообще" },
+  { key: "Длина смеха",        desc: "Сколько по времени ржал" },
+  { key: "Громкость смеха",    desc: "Насколько громко" },
+  { key: "Свежесть",           desc: "Видел раньше или нет" },
+  { key: "Повторяемость",      desc: "Сколько раз ещё рассмешит" },
+  { key: "Реакция при повторе",desc: "Смешно ли при пересмотре" }
+];
+
+const ranks = [
+  { min: 0,  max: 20, label: "Не прикол" },
+  { min: 21, max: 40, label: "Слабенько" },
+  { min: 41, max: 60, label: "Норм мем" },
+  { min: 61, max: 75, label: "Жиза" },
+  { min: 76, max: 89, label: "В сохранёнки" },
+  { min: 90, max: 90, label: "Мем года" }
+];
+
+const critBox = document.getElementById("criteria");
+criteria.forEach((c, i) => {
+  const div = document.createElement("div");
+  div.className = "criterion";
+  div.innerHTML = `
+    <div class="criterion-top">
+      <div>
+        <div class="criterion-name">${c.key}</div>
+        <div class="criterion-desc">${c.desc}</div>
+      </div>
+      <div class="criterion-val" id="val${i}">0</div>
+    </div>
+    <input type="range" min="0" max="15" value="0" id="crit${i}" oninput="updateTotal()">
+  `;
+  critBox.appendChild(div);
+});
+
+function getScores() {
+  return criteria.map((_, i) => +document.getElementById("crit" + i).value);
+}
+
+function updateTotal() {
+  let total = 0;
+  criteria.forEach((_, i) => {
+    const v = +document.getElementById("crit" + i).value;
+    document.getElementById("val" + i).textContent = v;
+    total += v;
+  });
+  document.getElementById("total").innerHTML = `${total}<small>/ 90</small>`;
+  const r = ranks.find(r => total >= r.min && total <= r.max);
+  document.getElementById("rank").textContent = r ? r.label : "";
+}
+
+const fileInput = document.getElementById("memFile");
+const preview = document.getElementById("preview");
+fileInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    preview.src = ev.target.result;
+    preview.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+function saveMeme() {
+  const scores = getScores();
+  const total = scores.reduce((a, b) => a + b, 0);
+  const rank = (ranks.find(r => total >= r.min && total <= r.max) || {}).label || "";
+
+  const meme = {
+    id: Date.now(),
+    url: document.getElementById("memUrl").value.trim(),
+    image: preview.style.display === "block" ? preview.src : "",
+    desc: document.getElementById("memDesc").value.trim(),
+    scores, total, rank,
+    date: new Date().toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })
+  };
+
+  const list = JSON.parse(localStorage.getItem("memes") || "[]");
+  list.unshift(meme);
+  localStorage.setItem("memes", JSON.stringify(list));
+
+  resetForm();
+  renderList();
+}
+
+function resetForm() {
+  document.getElementById("memUrl").value = "";
+  document.getElementById("memDesc").value = "";
+  document.getElementById("memFile").value = "";
+  preview.src = "";
+  preview.style.display = "none";
+  criteria.forEach((_, i) => document.getElementById("crit" + i).value = 0);
+  updateTotal();
+}
+
+function renderList() {
+  const list = JSON.parse(localStorage.getItem("memes") || "[]");
+  const box = document.getElementById("memList");
+  document.getElementById("count").textContent = list.length;
+
+  if (!list.length) {
+    box.innerHTML = '<div class="empty">Пока ничего не оценено</div>';
+    return;
+  }
+
+  box.innerHTML = "";
+  list.forEach(m => {
+    const div = document.createElement("div");
+    div.className = "mem-item";
+    const img = m.image ? `<img src="${m.image}" alt="">` : "";
+    const link = m.url ? `<a href="${m.url}" target="_blank" rel="noopener">открыть ↗</a>` : "";
+    const details = criteria.map((c, i) => `${c.key} ${m.scores[i]}`).join(" · ");
+    div.innerHTML = `
+      ${img}
+      <div class="mem-info">
+        <div class="mem-desc">${m.desc || "<span style='color:#525252'>(без описания)</span>"}${link}</div>
+        <div class="mem-scores">${details}</div>
+        <div class="mem-date">${m.date}</div>
+      </div>
+      <div class="mem-score">
+        <div class="mem-score-num">${m.total}</div>
+        <div class="mem-score-rank">${m.rank}</div>
+      </div>
+      <button class="delete-btn" onclick="deleteMeme(${m.id})">✕</button>
+    `;
+    box.appendChild(div);
+  });
+}
+
+function deleteMeme(id) {
+  let list = JSON.parse(localStorage.getItem("memes") || "[]");
+  list = list.filter(m => m.id !== id);
+  localStorage.setItem("memes", JSON.stringify(list));
+  renderList();
+}
+
+updateTotal();
+renderList();
+</script>
+</body>
+</html>
